@@ -4,7 +4,7 @@ import { TextInput, Button } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import {connect} from 'react-redux';
 
-import {checkValue, checkUser} from '../Redux/actions';
+import {checkValue, checkUser, showAlert} from '../Redux/actions';
 
 
 const styles = StyleSheet.create({
@@ -73,8 +73,16 @@ class LogIn extends React.Component {
             return null;
         }
     }
+
+    viewAlert = () => {
+      if (this.props.alertValue) {
+        Alert.alert('Registration was successful', 'you can enter the chat with your password and email');
+        this.props.showAlert(false);
+      }
+    }
   
     render() {
+      this.viewAlert();
       return (
         <LinearGradient colors={['#1E90FF', '#9400D3'].reverse()} start={{x: .1, y: 1}} end={{x: 0, y: .1}} style={{flex: 1}}>
           <View style={styles.containerLogin}>
@@ -107,7 +115,7 @@ class LogIn extends React.Component {
   
             <View style={styles.registr}>
               <Text style={{fontSize:20,marginRight:10}}>Don't have an account?</Text>
-              <Text onPress={ () => console.error('registration')} style={{fontSize:20, color: '#C621EF'}}>Sign up</Text>
+              <Text onPress={ () => this.props.navigation.navigate('Registration')} style={{fontSize:20, color: '#C621EF'}}>Sign up</Text>
             </View> 
   
           </View>
@@ -117,7 +125,7 @@ class LogIn extends React.Component {
   }
 
   const mapStateToProps = (state) => {
-      return {value: state.value, password: state.password}
+      return {value: state.value, password: state.password, alertValue: state.alertValue}
   };
   
-  export default connect(mapStateToProps, {checkValue, checkUser}) (LogIn);
+  export default connect(mapStateToProps, {checkValue, checkUser, showAlert}) (LogIn);

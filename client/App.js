@@ -1,24 +1,24 @@
 import React from 'react';
-import { createStackNavigator, createAppContainer } from "react-navigation";
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 
 import reducer from './src/Redux/reducers/index';
-import appStart from './src/Components/appStart';
-import LogIn from './src/Components/LogIn';
+import AppNavigator from './src/navigation/signInNavigation';
+import ChatNavigator from './src/navigation/chatNavigation';
 
 const store = createStore(reducer, applyMiddleware(thunk));
 
-const AppNavigator = createStackNavigator({
-  Home: appStart,
-  Login: LogIn
-},
-{
-  initialRouteName: "Home"
-});
-
-const AppContainer = createAppContainer(AppNavigator);
+const AppContainer = createAppContainer(createSwitchNavigator(
+  {
+    SignIn: AppNavigator,
+    Chat: ChatNavigator
+  },
+  {
+    initialRouteName: 'SignIn'
+  }
+));
 
 export default class App extends React.PureComponent {
   render() {

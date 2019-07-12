@@ -6,7 +6,8 @@ const initialState = {
   value: false,
   registrationValue: false,
   password: false,
-  users: []
+  users: [],
+  alertValue: false
 };
 
 export default function reducer(state = initialState, action) {
@@ -34,6 +35,9 @@ export default function reducer(state = initialState, action) {
 
     case 'SHOW_USERS':
         return { ...state, users: action.payload};
+
+    case 'SHOW_ALERT':
+        return { ...state, alertValue: action.payload};
 
     default:
       return state; 

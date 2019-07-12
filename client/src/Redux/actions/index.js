@@ -8,6 +8,7 @@ export const checkValue = (boolean) => ({type:'ADD_BOOL', payload: boolean});
 export const registrValue = (boolean) => ({type:'ADD_BOOL2', payload: boolean});
 export const wrongPassword = (boolean) => ({type:'ADD_BOOL3', payload: boolean});
 export const getUsers = (users) => ({type:'SHOW_USERS', payload: users});
+export const showAlert = (boolean) => ({type:'SHOW_ALERT', payload: boolean});
 
 let socket;
 
@@ -19,7 +20,7 @@ export const checkUser = (self, userInfo) => {
                          body: JSON.stringify({userInfo})
                        };
         
-        fetch('http://localhost:4000/searchUser', myInit).then( res => res.json()).then(response => {
+        fetch('http://192.168.0.83:4000/searchUser', myInit).then( res => res.json()).then(response => {
             console.log(response);
             if (response.message === 'Wrong password') {
                 dispatch(wrongPassword(true));
@@ -31,7 +32,7 @@ export const checkUser = (self, userInfo) => {
                 dispatch(addUser(response));
                 self.props.navigation.navigate('Chat');
 
-                socket = io.connect('http://192.168.0.147:4000');
+                socket = io.connect('http://192.168.0.83:4000');
 
                 socket.on('message', (data) => {
                     console.log(data);
@@ -50,14 +51,15 @@ export const registrUser = (self, user) => {
                          body: JSON.stringify({user})
                        };
         
-        fetch('http://localhost:4000/registration', myInit).then( res => res.json()).then(response => {
+        fetch('http://192.168.0.83:4000/registration', myInit).then( res => res.json()).then(response => {
             console.log(response);
             if (response.message === 'error') {
                 dispatch(registrValue(true));
             } else {
                 console.log('польватель зарегистрирован');
-                self.props.history.push('/');
+                self.props.navigation.navigate('Login');
                 dispatch(checkValue(false));
+                dispatch(showAlert(true));
             }
         });
     };
@@ -70,7 +72,7 @@ export const showUsersFromBd = () => {
                          body: JSON.stringify({})
                        };
 
-        fetch('http://localhost:4000/showUsers', myInit).then( res => res.json()).then(response => {
+        fetch('http://192.168.0.83:4000/showUsers', myInit).then( res => res.json()).then(response => {
             console.log(response);
             
             dispatch(getUsers(response));
@@ -116,6 +118,30 @@ export const sendToken = (data, self) => {
         });
     };
 };
+
+
+export const updatePhoto = (src, user) => {
+    return (dispatch) => {
+
+        const info = {
+            src,
+            email: user.email,
+            name: user.name
+        }
+
+        const myInit = { method: 'POST',
+                         headers: {'Content-Type': 'application/json'},
+                         body: JSON.stringify({info})
+                       };
+        
+        fetch('http://192.168.0.83:4000/update', myInit).then( res => res.json()).then(response => {
+            if (response) {
+                dispatch(addUser(response));             
+            }
+        });
+    };
+};
+
 
 export const sendMessage = (text, name) => {
     if (text) {
